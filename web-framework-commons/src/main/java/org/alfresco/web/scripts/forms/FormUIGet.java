@@ -1453,10 +1453,11 @@ public class FormUIGet extends DeclarativeWebScript
     {
         // we can't continue without at least a control template
         if (fieldConfig == null || 
+               // We want to be able to show transient properties in a set, too.
                fieldConfig.getControl() == null || 
-               fieldConfig.getControl().getTemplate() == null || 
+               fieldConfig.getControl().getTemplate() == null /*|| 
                fieldConfig.getAttributes() == null || 
-               (fieldConfig.getAttributes().get("set") != null && !fieldConfig.getAttributes().get("set").isEmpty()))
+               (fieldConfig.getAttributes().get("set") != null && !fieldConfig.getAttributes().get("set").isEmpty()))*/
         {
             return null;
         }
