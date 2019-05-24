@@ -1452,15 +1452,18 @@ public class FormUIGet extends DeclarativeWebScript
                 JSONObject fieldDefinition, FormField fieldConfig) throws JSONException
     {
         // we can't continue without at least a control template
+            logger.warn("XXXXXXXXXXXXXXXXXXXXX BEFORE " + fieldConfig);
         if (fieldConfig == null || 
-               // We want to be able to show transient properties in a set, too.
+               /* We want to be able to show transient properties in a set, too. */
                fieldConfig.getControl() == null || 
                fieldConfig.getControl().getTemplate() == null /*|| 
                fieldConfig.getAttributes() == null || 
-               (fieldConfig.getAttributes().get("set") != null && !fieldConfig.getAttributes().get("set").isEmpty()))*/
+               (fieldConfig.getAttributes().get("set") != null && !fieldConfig.getAttributes().get("set").isEmpty())*/)
         {
+            logger.warn("XXXXXXXXXXXXXXXXXXXXX iN: return null");
             return null;
         }
+            logger.warn("XXXXXXXXXXXXXXXXXXXXX AFTER " + fieldConfig);
         
         if (logger.isDebugEnabled())
             logger.debug("Generating transient field for \"" + fieldName + "\"");
