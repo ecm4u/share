@@ -6,6 +6,7 @@
         <version>6.0.b</version>
     </parent>
     <artifactId>alfresco-web-framework-commons</artifactId>
+    <version>6.0.b.ecm4u.1-SNAPSHOT</version>
     <name>Alfresco Web Framework common libraries</name>
     <description>Alfresco Web Framework common libraries</description>
     <packaging>war</packaging>
