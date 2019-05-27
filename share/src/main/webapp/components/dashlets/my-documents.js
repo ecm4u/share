@@ -98,7 +98,7 @@
        */
       getWebscriptUrl: function SimpleDocList_getWebscriptUrl()
       {
-         return Alfresco.constants.PROXY_URI + "slingshot/doclib/doclist/documents/node/alfresco/company/home?max=50";
+         return Alfresco.constants.PROXY_URI + "slingshot/doclib/doclist/all/node/alfresco/company/home?max=50";
       },
 
       /**
