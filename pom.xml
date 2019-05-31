@@ -8,21 +8,23 @@
     </parent>
 
     <artifactId>alfresco-share-parent</artifactId>
-    <version>6.0.b</version>
+    <version>6.0.b.ecm4u.1</version>
     <packaging>pom</packaging>
     <name>Alfresco Share Parent</name>
 
     <modules>
         <module>share-services</module>
         <module>share</module>
+        <!--
         <module>share-po</module>
         <module>cmm-qa</module>
+        -->
         <module>web-framework-commons</module>
+        <!--
         <module>web-editor</module>
         <module>web-editor-plugin</module>
         <module>web-editor-samples/customer-site</module>
         <module>wcmquickstart-module</module>
-        <!--
         <module>packaging</module>
         -->
 
