@@ -7,6 +7,7 @@
     </parent>
 
     <artifactId>share</artifactId>
+    <version>6.1.0.2.ecm4u.1.B</version>
     <packaging>war</packaging>
     <name>Alfresco Share WAR</name>
     <description>Alfresco Share</description>
