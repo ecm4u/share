@@ -2805,8 +2805,13 @@ Alfresco.Share.userAvatar = function(userName, size)
             var name = record.fileName,
                extn = name.substring(name.lastIndexOf(".")),
                locn = record.location,
-               nodeRef = new Alfresco.util.NodeRef(record.nodeRef),
-               docDetailsUrl = Alfresco.constants.URL_PAGECONTEXT + (locn.site ? "site/" + locn.site + '/' : "") + "document-details?nodeRef=" + nodeRef.toString();
+               nodeRef = new Alfresco.util.NodeRef(record.nodeRef);
+            if (record.isFolder) {
+                var docDetailsUrl = Alfresco.constants.URL_PAGECONTEXT + (locn.site ? "site/" + locn.site + '/' : "") + "repository#filter=path|" + record.webdavUrl.replace(/^\/webdav/, "");
+            } else {
+                var docDetailsUrl = Alfresco.constants.URL_PAGECONTEXT + (locn.site ? "site/" + locn.site + '/' : "") + "document-details?nodeRef=" + nodeRef.toString();
+            }
+
 
             if (this.options.simpleView)
             {
@@ -2814,7 +2819,11 @@ Alfresco.Share.userAvatar = function(userName, size)
                 * Simple View
                 */
                var id = this.id + '-preview-' + oRecord.getId();
-               desc = '<span id="' + id + '" class="icon32"><a href="' + docDetailsUrl + '"><img src="' + Alfresco.constants.URL_RESCONTEXT + 'components/images/filetypes/' + Alfresco.util.getFileIcon(name) + '" alt="' + extn + '" title="' + $html(name) + '" /></a></span>';
+               if (record.isFolder) {
+                   desc = '<span id="' + id + '" class="icon32"><a href="' + docDetailsUrl + '"><img src="' + Alfresco.constants.URL_RESCONTEXT + 'components/documentlibrary/images/folder-32.png" alt="' + extn + '" title="' + $html(name) + '" /></a></span>';
+               } else {
+                   desc = '<span id="' + id + '" class="icon32"><a href="' + docDetailsUrl + '"><img src="' + Alfresco.constants.URL_RESCONTEXT + 'components/images/filetypes/' + Alfresco.util.getFileIcon(name) + '" alt="' + extn + '" title="' + $html(name) + '" /></a></span>';
+               }
 
                // Preview tooltip
                this.previewTooltips.push(id);
@@ -2826,9 +2835,14 @@ Alfresco.Share.userAvatar = function(userName, size)
                 */
                columnWidth = 100;
                var url = Alfresco.constants.PROXY_URI + "api/node/" + nodeRef.uri + "/content/thumbnails/doclib?c=queue&ph=true";
-               if (record.lastThumbnailModification)
-               {
-                  url = url + "&lastModified=" + record.lastThumbnailModification;
+               if (record.isFolder) {
+                   var url = Alfresco.constants.URL_RESCONTEXT + "components/documentlibrary/images/folder-64.png";
+               } else {
+                   var url = Alfresco.constants.PROXY_URI + "api/node/" + nodeRef.uri + "/content/thumbnails/doclib?c=queue&ph=true";
+                   if (record.lastThumbnailModification)
+                   {
+                       url = url + "&lastModified=" + record.lastThumbnailModification;
+                   }
                }
                desc = '<span class="thumbnail"><a href="' + docDetailsUrl + '"><img src="' + url + '" alt="' + extn + '" title="' + $html(name) + '" /></a></span>';
             }
@@ -2869,8 +2883,12 @@ Alfresco.Share.userAvatar = function(userName, size)
                dateLine = "",
                canComment = record.permissions.userAccess.create,
                locn = record.location,
-               nodeRef = new Alfresco.util.NodeRef(record.nodeRef),
-               docDetailsUrl = Alfresco.constants.URL_PAGECONTEXT + (locn.site ? "site/" + locn.site + '/' : "") + "document-details?nodeRef=" + nodeRef.toString();
+               nodeRef = new Alfresco.util.NodeRef(record.nodeRef);
+               if (record.isFolder) {
+                   var docDetailsUrl = Alfresco.constants.URL_PAGECONTEXT + (locn.site ? "site/" + locn.site + '/' : "") + "repository#filter=path|" + record.webdavUrl.replace(/^\/webdav/, "");
+               } else {
+                   var docDetailsUrl = Alfresco.constants.URL_PAGECONTEXT + (locn.site ? "site/" + locn.site + '/' : "") + "document-details?nodeRef=" + nodeRef.toString();
+               }
 
             // Description non-blank?
             if (record.description && record.description !== "")
