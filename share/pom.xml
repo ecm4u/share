@@ -32,8 +32,7 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>alfresco-web-framework-commons</artifactId>
-            <version>6.2.0.ecm4u.1-SNAPSHOT</version>
-            <!--<version>${project.version}</version>-->
+            <version>${project.version}</version>
             <classifier>classes</classifier>
         </dependency>
         <dependency>
@@ -206,8 +205,7 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>alfresco-web-framework-commons</artifactId>
-            <version>6.2.0.ecm4u.1-SNAPSHOT</version>
-            <!--<version>${project.version}</version>-->
+            <version>${project.version}</version>
             <type>war</type>
             <optional>true</optional>
             <!-- MNT-10118 -->
