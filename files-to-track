@@ -1,0 +1,7 @@
+share-services/src/main/java/org/alfresco/repo/web/scripts/datalist/DataListDownloadWebScript.java
+share/src/main/java/org/alfresco/web/scripts/MessagesWebScript.java
+share/src/main/resources/alfresco/site-webscripts/org/alfresco/components/footer/footer.get.html.ftl
+share/src/main/resources/alfresco/site-webscripts/org/alfresco/components/footer/footer.get.js
+share/src/main/webapp/components/dashlets/my-documents.js
+share/src/main/webapp/js/share.js
+web-framework-commons/src/main/java/org/alfresco/web/scripts/forms/FormUIGet.java
