@@ -1,0 +1,218 @@
+diff --git a/share-services/src/main/java/org/alfresco/repo/web/scripts/datalist/DataListDownloadWebScript.java b/share-services/src/main/java/org/alfresco/repo/web/scripts/datalist/DataListDownloadWebScript.java
+index 54a0f65a9..571d7ae15 100644
+--- src/main/java/org/alfresco/repo/web/scripts/datalist/DataListDownloadWebScript.java
++++ src/main/java/org/alfresco/repo/web/scripts/datalist/DataListDownloadWebScript.java
+@@ -249,13 +249,7 @@ public class DataListDownloadWebScript extends DeclarativeSpreadsheetWebScript
+ 
+     private QName buildType(NodeRef list)
+     {
+-       String typeS = (String)nodeService.getProperty(list, DATA_LIST_ITEM_TYPE);
+-       if(! typeS.startsWith(NamespaceService.DATALIST_MODEL_PREFIX + ":"))
+-       {
+-          throw new WebScriptException(Status.STATUS_NOT_IMPLEMENTED, "Unexpected list type " + typeS);
+-       }
+-       QName type = QName.createQName(NamespaceService.DATALIST_MODEL_1_0_URI, typeS.substring(typeS.indexOf(':')+1));
+-       return type;
++       return QName.createQName((String) nodeService.getProperty(list, DATA_LIST_ITEM_TYPE), this.namespaceService);
+     }
+ 
+     private List<NodeRef> getItems(NodeRef list)
+diff --git e/src/main/java/org/alfresco/web/scripts/MessagesWebScript.java b/share/src/main/java/org/alfresco/web/scripts/MessagesWebScript.java
+index d112b0357..2ecb89b9c 100644
+--- src/main/java/org/alfresco/web/scripts/MessagesWebScript.java
++++ src/main/java/org/alfresco/web/scripts/MessagesWebScript.java
+@@ -91,15 +91,15 @@ public class MessagesWebScript extends org.springframework.extensions.webscripts
+         }
+         writer.write(";\r\n");
+ 
+-        if (isCommunity())
+-        {
+-            // community logo
+-            final String serverPath = req.getServerPath();
+-            final int schemaIndex = serverPath.indexOf(':');
+-            writer.write("window.setTimeout(function(){(document.getElementById('alfresco-yuiloader')||document.createElement('div')).innerHTML = '<img src=\"");
+-            writer.write(serverPath.substring(0, schemaIndex));
+-            writer.write("://www.alfresco.com/assets/images/logos/community-5.2-share.png\" alt=\"*\" style=\"display:none\"/>\'}, 100);\r\n");
+-        }
++//        if (isCommunity())
++//        {
++//            // community logo
++//            final String serverPath = req.getServerPath();
++//            final int schemaIndex = serverPath.indexOf(':');
++//            writer.write("window.setTimeout(function(){(document.getElementById('alfresco-yuiloader')||document.createElement('div')).innerHTML = '<img src=\"");
++//            writer.write(serverPath.substring(0, schemaIndex));
++//            writer.write("://www.alfresco.com/assets/images/logos/community-5.2-share.png\" alt=\"*\" style=\"display:none\"/>\'}, 100);\r\n");
++//        }
+         return writer.toString();
+     }
+ 
+@@ -115,15 +115,15 @@ public class MessagesWebScript extends org.springframework.extensions.webscripts
+         StringBuilder sb = new StringBuilder(512);
+         sb.append(";\r\n");
+ 
+-        if (isCommunity())
+-        {
+-            // community logo
+-            final String serverPath = req.getServerPath();
+-            final int schemaIndex = serverPath.indexOf(':');
+-            sb.append("window.setTimeout(function(){(document.getElementById('alfresco-yuiloader')||document.createElement('div')).innerHTML = '<img src=\"");
+-            sb.append(serverPath.substring(0, schemaIndex));
+-            sb.append("://www.alfresco.com/assets/images/logos/community-5.2-share.png\" alt=\"*\" style=\"display:none\"/>\'}, 100);\r\n");
+-        }
++//        if (isCommunity())
++//        {
++//            // community logo
++//            final String serverPath = req.getServerPath();
++//            final int schemaIndex = serverPath.indexOf(':');
++//            sb.append("window.setTimeout(function(){(document.getElementById('alfresco-yuiloader')||document.createElement('div')).innerHTML = '<img src=\"");
++//            sb.append(serverPath.substring(0, schemaIndex));
++//            sb.append("://www.alfresco.com/assets/images/logos/community-5.2-share.png\" alt=\"*\" style=\"display:none\"/>\'}, 100);\r\n");
++//        }
+         return sb.toString();
+     }
+     
+diff --git a/share/src/main/resources/alfresco/site-webscripts/org/alfresco/components/footer/footer.get.html.ftl b/share/src/main/resources/alfresco/site-webscripts/org/alfresco/components/footer/footer.get.html.ftl
+index c1efa8e68..08c0a7b7a 100644
+--- src/main/resources/alfresco/site-webscripts/org/alfresco/components/footer/footer.get.html.ftl
++++ src/main/resources/alfresco/site-webscripts/org/alfresco/components/footer/footer.get.html.ftl
+@@ -16,6 +16,9 @@
+    <@uniqueIdDiv>
+       <#assign fc=config.scoped["Edition"]["footer"]>
+       <div class="footer ${fc.getChildValue("css-class")!"footer-com"}">
++         <#if footerContent??>
++            ${footerContent}
++         <#else>
+          <span class="copyright">
+             <a href="#" onclick="Alfresco.module.getAboutShareInstance().show(); return false;"><img src="${url.context}/res/components/images/${fc.getChildValue("logo")!"alfresco-logo.svg"}" alt="${fc.getChildValue("alt-text")!"Alfresco Community"}" border="0"/></a>
+             <#if licenseHolder != "" && licenseHolder != "UNKNOWN">
+@@ -23,6 +26,7 @@
+             </#if>
+             <span>${msg(fc.getChildValue("label")!"label.copyright")}</span>
+          </span>
++         </#if>
+       </div>
+    </@>
+ </@>
+diff --git a/share/src/main/resources/alfresco/site-webscripts/org/alfresco/components/footer/footer.get.js b/share/src/main/resources/alfresco/site-webscripts/org/alfresco/components/footer/footer.get.js
+index cc39ea52d..b653099fb 100644
+--- src/main/resources/alfresco/site-webscripts/org/alfresco/components/footer/footer.get.js
++++ src/main/resources/alfresco/site-webscripts/org/alfresco/components/footer/footer.get.js
+@@ -4,7 +4,12 @@
+ 
+ function main()
+ {
++   var response = remote.call("/api/path/content/workspace/SpacesStore/Company%20Home/Data%20Dictionary/ecm4u/footer/content.html");
++   if (response.status == 200)
++   {
++      model.footerContent = response;
++   }
+    model.licenseHolder = context.properties["editionInfo"].holder;
+ }
+ 
+-main();
+\ No newline at end of file
++main();
+diff --git a/share/src/main/webapp/components/dashlets/my-documents.js b/share/src/main/webapp/components/dashlets/my-documents.js
+index 5206d2de0..cedae6369 100644
+--- src/main/webapp/components/dashlets/my-documents.js
++++ src/main/webapp/components/dashlets/my-documents.js
+@@ -98,7 +98,7 @@
+        */
+       getWebscriptUrl: function SimpleDocList_getWebscriptUrl()
+       {
+-         return Alfresco.constants.PROXY_URI + "slingshot/doclib/doclist/documents/node/alfresco/company/home?max=50";
++         return Alfresco.constants.PROXY_URI + "slingshot/doclib/doclist/all/node/alfresco/company/home?max=50";
+       },
+ 
+       /**
+diff --git a/share/src/main/webapp/js/share.js b/share/src/main/webapp/js/share.js
+index fbca31fa3..d17411319 100644
+--- src/main/webapp/js/share.js
++++ src/main/webapp/js/share.js
+@@ -2805,8 +2805,13 @@ Alfresco.Share.userAvatar = function(userName, size)
+             var name = record.fileName,
+                extn = name.substring(name.lastIndexOf(".")),
+                locn = record.location,
+-               nodeRef = new Alfresco.util.NodeRef(record.nodeRef),
+-               docDetailsUrl = Alfresco.constants.URL_PAGECONTEXT + (locn.site ? "site/" + locn.site + '/' : "") + "document-details?nodeRef=" + nodeRef.toString();
++               nodeRef = new Alfresco.util.NodeRef(record.nodeRef);
++            if (record.isFolder) {
++                var docDetailsUrl = Alfresco.constants.URL_PAGECONTEXT + (locn.site ? "site/" + locn.site + '/' : "") + "repository#filter=path|" + record.webdavUrl.replace(/^\/webdav/, "");
++            } else {
++                var docDetailsUrl = Alfresco.constants.URL_PAGECONTEXT + (locn.site ? "site/" + locn.site + '/' : "") + "document-details?nodeRef=" + nodeRef.toString();
++            }
++
+ 
+             if (this.options.simpleView)
+             {
+@@ -2814,7 +2819,11 @@ Alfresco.Share.userAvatar = function(userName, size)
+                 * Simple View
+                 */
+                var id = this.id + '-preview-' + oRecord.getId();
+-               desc = '<span id="' + id + '" class="icon32"><a href="' + docDetailsUrl + '"><img src="' + Alfresco.constants.URL_RESCONTEXT + 'components/images/filetypes/' + Alfresco.util.getFileIcon(name) + '" alt="' + extn + '" title="' + $html(name) + '" /></a></span>';
++               if (record.isFolder) {
++                   desc = '<span id="' + id + '" class="icon32"><a href="' + docDetailsUrl + '"><img src="' + Alfresco.constants.URL_RESCONTEXT + 'components/documentlibrary/images/folder-32.png" alt="' + extn + '" title="' + $html(name) + '" /></a></span>';
++               } else {
++                   desc = '<span id="' + id + '" class="icon32"><a href="' + docDetailsUrl + '"><img src="' + Alfresco.constants.URL_RESCONTEXT + 'components/images/filetypes/' + Alfresco.util.getFileIcon(name) + '" alt="' + extn + '" title="' + $html(name) + '" /></a></span>';
++               }
+ 
+                // Preview tooltip
+                this.previewTooltips.push(id);
+@@ -2826,9 +2835,14 @@ Alfresco.Share.userAvatar = function(userName, size)
+                 */
+                columnWidth = 100;
+                var url = Alfresco.constants.PROXY_URI + "api/node/" + nodeRef.uri + "/content/thumbnails/doclib?c=queue&ph=true";
+-               if (record.lastThumbnailModification)
+-               {
+-                  url = url + "&lastModified=" + record.lastThumbnailModification;
++               if (record.isFolder) {
++                   var url = Alfresco.constants.URL_RESCONTEXT + "components/documentlibrary/images/folder-64.png";
++               } else {
++                   var url = Alfresco.constants.PROXY_URI + "api/node/" + nodeRef.uri + "/content/thumbnails/doclib?c=queue&ph=true";
++                   if (record.lastThumbnailModification)
++                   {
++                       url = url + "&lastModified=" + record.lastThumbnailModification;
++                   }
+                }
+                desc = '<span class="thumbnail"><a href="' + docDetailsUrl + '"><img src="' + url + '" alt="' + extn + '" title="' + $html(name) + '" /></a></span>';
+             }
+@@ -2869,8 +2883,12 @@ Alfresco.Share.userAvatar = function(userName, size)
+                dateLine = "",
+                canComment = record.permissions.userAccess.create,
+                locn = record.location,
+-               nodeRef = new Alfresco.util.NodeRef(record.nodeRef),
+-               docDetailsUrl = Alfresco.constants.URL_PAGECONTEXT + (locn.site ? "site/" + locn.site + '/' : "") + "document-details?nodeRef=" + nodeRef.toString();
++               nodeRef = new Alfresco.util.NodeRef(record.nodeRef);
++               if (record.isFolder) {
++                   var docDetailsUrl = Alfresco.constants.URL_PAGECONTEXT + (locn.site ? "site/" + locn.site + '/' : "") + "repository#filter=path|" + record.webdavUrl.replace(/^\/webdav/, "");
++               } else {
++                   var docDetailsUrl = Alfresco.constants.URL_PAGECONTEXT + (locn.site ? "site/" + locn.site + '/' : "") + "document-details?nodeRef=" + nodeRef.toString();
++               }
+ 
+             // Description non-blank?
+             if (record.description && record.description !== "")
+@@ -3067,4 +3085,4 @@ Alfresco.Share.userAvatar = function(userName, size)
+          this.services.preferences[file.isFavourite ? "add" : "remove"].call(this.services.preferences, Alfresco.service.Preferences.FAVOURITE_DOCUMENTS, nodeRef, responseConfig);
+       }
+    });
+-})();
+\ No newline at end of file
++})();
+diff --git a/web-framework-commons/src/main/java/org/alfresco/web/scripts/forms/FormUIGet.java b/web-framework-commons/src/main/java/org/alfresco/web/scripts/forms/FormUIGet.java
+index 1799c444a..3002c56f8 100644
+--- src/main/java/org/alfresco/web/scripts/forms/FormUIGet.java
++++ src/main/java/org/alfresco/web/scripts/forms/FormUIGet.java
+@@ -1453,10 +1453,11 @@ public class FormUIGet extends DeclarativeWebScript
+     {
+         // we can't continue without at least a control template
+         if (fieldConfig == null || 
++               /* We want to be able to show transient properties in a set, too. */
+                fieldConfig.getControl() == null || 
+-               fieldConfig.getControl().getTemplate() == null || 
++               fieldConfig.getControl().getTemplate() == null /*|| 
+                fieldConfig.getAttributes() == null || 
+-               (fieldConfig.getAttributes().get("set") != null && !fieldConfig.getAttributes().get("set").isEmpty()))
++               (fieldConfig.getAttributes().get("set") != null && !fieldConfig.getAttributes().get("set").isEmpty())*/)
+         {
+             return null;
+         }

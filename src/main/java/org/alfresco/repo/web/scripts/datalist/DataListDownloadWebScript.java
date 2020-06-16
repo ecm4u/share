@@ -249,13 +249,7 @@ public class DataListDownloadWebScript extends DeclarativeSpreadsheetWebScript
 
     private QName buildType(NodeRef list)
     {
-       String typeS = (String)nodeService.getProperty(list, DATA_LIST_ITEM_TYPE);
-       if(! typeS.startsWith(NamespaceService.DATALIST_MODEL_PREFIX + ":"))
-       {
-          throw new WebScriptException(Status.STATUS_NOT_IMPLEMENTED, "Unexpected list type " + typeS);
-       }
-       QName type = QName.createQName(NamespaceService.DATALIST_MODEL_1_0_URI, typeS.substring(typeS.indexOf(':')+1));
-       return type;
+       return QName.createQName((String) nodeService.getProperty(list, DATA_LIST_ITEM_TYPE), this.namespaceService);
     }
 
     private List<NodeRef> getItems(NodeRef list)
