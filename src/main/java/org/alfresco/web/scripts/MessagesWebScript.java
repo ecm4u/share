@@ -34,8 +34,8 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.Map;
 
-import org.alfresco.web.site.EditionInfo;
-import org.alfresco.web.site.EditionInterceptor;
+//import org.alfresco.web.site.EditionInfo;
+//import org.alfresco.web.site.EditionInterceptor;
 import org.springframework.extensions.surf.RequestContext;
 import org.springframework.extensions.surf.support.ThreadLocalRequestContext;
 import org.springframework.extensions.surf.util.I18NUtil;
@@ -127,34 +127,34 @@ public class MessagesWebScript extends org.springframework.extensions.webscripts
         return sb.toString();
     }
     
-    protected boolean isLicensed()
-    {
-        boolean licensed = false;
-        final RequestContext rc = ThreadLocalRequestContext.getRequestContext();
-        if (rc != null)
-        {
-            final String edition = ((EditionInfo)rc.getValue(EditionInterceptor.EDITION_INFO)).getEdition();
-            licensed = (EditionInterceptor.ENTERPRISE_EDITION.equals(edition));
-        }
-        return licensed;
-    }
+//    protected boolean isLicensed()
+//    {
+//        boolean licensed = false;
+//        final RequestContext rc = ThreadLocalRequestContext.getRequestContext();
+//        if (rc != null)
+//        {
+//            final String edition = ((EditionInfo)rc.getValue(EditionInterceptor.EDITION_INFO)).getEdition();
+//            licensed = (EditionInterceptor.ENTERPRISE_EDITION.equals(edition));
+//        }
+//        return licensed;
+//    }
     
     /**
      * Verifies if the licence edition is community
      * @return true if the edition was successfuly retrieved and is UNKNOWN_EDITION , false otherwise
      */
-    private boolean isCommunity()
-    {
-        final RequestContext rc = ThreadLocalRequestContext.getRequestContext();
-        if (rc != null)
-        {
-            EditionInfo editionInfo = ((EditionInfo)rc.getValue(EditionInterceptor.EDITION_INFO));
-            if (editionInfo.getValidResponse()) 
-            { 
-                return EditionInterceptor.UNKNOWN_EDITION.equals(editionInfo.getEdition()); 
-            }
-            //else, could not retrieve licence info from server
-        }
-        return false;
-    }
+//    private boolean isCommunity()
+//    {
+//        final RequestContext rc = ThreadLocalRequestContext.getRequestContext();
+//        if (rc != null)
+//        {
+//            EditionInfo editionInfo = ((EditionInfo)rc.getValue(EditionInterceptor.EDITION_INFO));
+//            if (editionInfo.getValidResponse()) 
+//            { 
+//                return EditionInterceptor.UNKNOWN_EDITION.equals(editionInfo.getEdition()); 
+//            }
+//            //else, could not retrieve licence info from server
+//        }
+//        return false;
+//    }
 }
