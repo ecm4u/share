@@ -5,7 +5,7 @@
 
 	<groupId>de.ecm4u.alfresco</groupId>
 	<artifactId>share</artifactId>
-	<version>6.2.1</version>
+	<version>6.2.1.ecm4u.1-SNAPSHOT</version>
 	<packaging>war</packaging>
 	<name>Alfresco Share WAR</name>
 	<description>Alfresco Share ecm4u overlay</description>
